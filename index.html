@@ -23,11 +23,34 @@
         </p>
         <p>
           This site is built upotn sid5432's work and is aim to allow users
-          convert SOR files to xlsx files inside a browser.
-          (You don't upload your file to a server, everything is done inside your browser.)
+          convert SOR files to xlsx files inside a browser. (You don't upload
+          your file to a server, everything is done inside your browser.)
         </p>
       </div>
     </header>
+    <main>
+      <fieldset>
+        <legend>Steps to do</legend>
+        <ol>
+          <li>
+            upload your SOR file (it only gets into the browser, nothing is
+            sent)
+          </li>
+          <li>click on "convert"</li>
+          <li>download your xlsx file</li>
+        </ol>
+      </fieldset>
+      <fieldset>
+        <legend>Work place</legend>
+        <div>
+          <label>
+            SOR file
+            <input accept=".sor" type="file">
+          </label>
+          <button id="convert">Convert</button>
+        </div>
+      </fieldset>
+    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

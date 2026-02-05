@@ -13,3 +13,12 @@ header {
     padding: 8px;
   }
 }
+
+fieldset {
+  width: max-content;
+  background-color: aliceblue;
+}
+
+label {
+  width: max-content;
+}
