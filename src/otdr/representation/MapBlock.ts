@@ -5,8 +5,11 @@ export type KnownBlockName = RequiredBlockName | OptionalBlockName;
 
 export type BlockDescriptor = {
   name: KnownBlockName | string; // terminated by '\0'
-  version: number; // 2 bytes
-  // if the version is 1.2, then the original number from SOR is 120
+  version: {
+    // if the version is 1.2, then the original number from SOR is 120
+    raw: number;
+    normalized: number; // = raw / 100
+  }
   normalizedVersion: number;
   size: number; // 4 bytes
 
