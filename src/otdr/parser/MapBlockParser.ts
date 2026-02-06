@@ -20,7 +20,7 @@ export class MapBlockParser implements BlockParser {
     this.parseBlockDescriptors();
 
     const parsedBlock = this.currentBlock as MapBlock;
-    return { ...dataParsedSoFar, map: parsedBlock };
+    return { ...dataParsedSoFar, mapBlock: parsedBlock };
   }
 
   private parseFormat(): void {

@@ -1,6 +1,6 @@
 import type { MapBlock } from "./MapBlock";
 
 export type Representation = {
-    map: MapBlock;
+    mapBlock: MapBlock;
     // TODO: rest of them
 };
