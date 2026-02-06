@@ -8,6 +8,7 @@ import {
 import { GenParamsBlockParser } from "./GenParamsBlockParser";
 import { SupParamsBlockParser } from "./SupParamsBlockParser";
 import { FxdParamsBlockParser } from "./FxdParamsBlockParser";
+import { KeyEventsBlockParser } from "./KeyEventsBlockParser";
 
 export class BlockParserFactory {
   public createParser(
@@ -30,8 +31,11 @@ export class BlockParserFactory {
       case "FxdParams":
         return new FxdParamsBlockParser(reader);
       case "KeyEvents":
+        return new KeyEventsBlockParser(reader);
       case "DataPts":
       case "LnkParams":
+        // TODO: LnkParams is missing from jsODTR, most probably it is solved by
+        // "slurping"
       case "Cksum":
         throw new Error("no implementation yet for: " + blockName);
     }
