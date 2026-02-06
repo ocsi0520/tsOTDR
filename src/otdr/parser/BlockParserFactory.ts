@@ -6,10 +6,14 @@ import {
   type KnownBlockName,
 } from "../representation/block-names";
 import { GenParamsBlockParser } from "./GenParamsBlockParser";
+import { SupParamsBlockParser } from "./SupParamsBlockParser";
 
 export class BlockParserFactory {
-  public createParser(blockName: KnownBlockName, reader: OtdrReader): BlockParser
-  public createParser(blockName: string, reader: OtdrReader): BlockParser
+  public createParser(
+    blockName: KnownBlockName,
+    reader: OtdrReader,
+  ): BlockParser;
+  public createParser(blockName: string, reader: OtdrReader): BlockParser;
   public createParser(blockName: string, reader: OtdrReader): BlockParser {
     if (!this.isKnownBlockName(blockName))
       throw new Error("no parser found for blockname: " + blockName);
@@ -21,6 +25,7 @@ export class BlockParserFactory {
       case "GenParams":
         return new GenParamsBlockParser(reader);
       case "SupParams":
+        return new SupParamsBlockParser(reader);
       case "FxdParams":
       case "KeyEvents":
       case "DataPts":
