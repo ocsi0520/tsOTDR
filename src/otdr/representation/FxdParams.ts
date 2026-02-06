@@ -11,22 +11,25 @@ export type UnitAssociation = AssociateType<typeof knownUnitsByRaw>;
 
 export type PulseEntry = {
   pulseWidthInNanoSeconds: number; // unsigned 2 bytes
-  /**
-   * 4 unsigned bytes, representing the time interval of the sample points
-   * from the docs:
-   * Sample spacing is an unsigned integer, representing the time interval of the sample points.
-   * These are in units of 0.01 picoseconds (for example, a value of 2 means 0.02 picoseconds).
-   * To convert it into meters, multiply the integer by 10-8 to become microseconds,
-   * and then multiply by the speed-of-light,
-   *
-   */
   sampleSpacing: {
+    /**
+     * 4 unsigned bytes, representing the time interval of the sample points
+     * from the docs:
+     * Sample spacing is an unsigned integer, representing the time interval of the sample points.
+     * These are in units of 0.01 picoseconds (for example, a value of 2 means 0.02 picoseconds).
+     * To convert it into meters, multiply the integer by 10^-8 to become microseconds,
+     * and then multiply by the speed-of-light,
+     *
+     */
     raw: number;
     microSeconds: number;
-    // TODO: meters and speed of light and other stuff
+    // indexOfRefraction is in normalized already
     // dx = microSeconds * speedOfLight / indexOfRefraction (in km)
+    distanceInKm: number;
     // range = dx * numberOfDataPoints
+    range: number;
     // resolution = dx * 1000 (got in meters)
+    resolution: number;
   };
   // unsigned 4 bytes, without any hussle
   numberOfDataPoints: number;
@@ -135,7 +138,7 @@ export type FxdParams = {
 
   traceType?: TraceTypeAssociation["Unified"]; // only v2
 
-  unknownRegionOrWindow: {
+  unknownRegionOrWindow?: { // only v2
     // al of them are signed 4 bytes
     x1: number;
     y1: number;
