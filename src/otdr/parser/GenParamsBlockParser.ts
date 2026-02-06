@@ -1,4 +1,3 @@
-import type { OtdrReader } from "../reader/OtdrReader";
 import {
   buildConditionByRaw,
   type BuildCondition,
@@ -7,11 +6,11 @@ import {
   type KnownRawBuildCondition,
 } from "../representation/GenParams";
 import type { Representation } from "../representation/Representation";
-import type { BlockParser } from "./BlockParser";
+import { BlockParser } from "./BlockParser";
 
 type Format = Representation["mapBlock"]["format"];
 
-export class GenParamsBlockParser implements BlockParser {
+export class GenParamsBlockParser extends BlockParser {
   private static fiberTypeByRaw: Record<number, FiberType> = {
     651: "G.651 (50um core multimode)",
     652: "G.652 (standard SMF)",
@@ -20,17 +19,13 @@ export class GenParamsBlockParser implements BlockParser {
     655: "G.655 (nonzero dispersion-shifted fiber)",
   };
 
-  private reader: OtdrReader;
   private currentBlock: Partial<GenParams> = {};
-  constructor(reader: OtdrReader) {
-    this.reader = reader;
-  }
   public parse(
     dataParsedSoFar: Partial<Representation>,
   ): Partial<Representation> {
     const format = dataParsedSoFar.mapBlock?.format || 1;
     console.log({ format });
-    this.parseName(format);
+    this.currentBlock.name = this.readName(dataParsedSoFar, "GenParams");
     this.currentBlock.lang = this.reader.readFixedString(2);
     this.currentBlock.cableId = this.reader.readStringUntilNull();
     this.currentBlock.fiberId = this.reader.readStringUntilNull();
@@ -60,13 +55,6 @@ export class GenParamsBlockParser implements BlockParser {
       normalized:
         GenParamsBlockParser.fiberTypeByRaw[rawFiberType] || "unknown",
     };
-  }
-
-  private parseName(format: Format): void {
-    if (format === 1) return;
-    const name = this.reader.readStringUntilNull();
-    if (name !== "GenParams") throw new Error("Invalid name for GenParams");
-    this.currentBlock.name = name;
   }
 
   private parseLocation(): void {

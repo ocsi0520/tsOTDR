@@ -1,15 +1,9 @@
-import type { OtdrReader } from "../reader/OtdrReader";
 import type { BlockDescriptor, MapBlock } from "../representation/MapBlock";
 import type { Representation } from "../representation/Representation";
-import type { BlockParser } from "./BlockParser";
+import { BlockParser } from "./BlockParser";
 
-export class MapBlockParser implements BlockParser {
-  private reader: OtdrReader;
+export class MapBlockParser extends BlockParser {
   private currentBlock: Partial<MapBlock> = {};
-
-  constructor(reader: OtdrReader) {
-    this.reader = reader;
-  }
 
   public parse(
     dataParsedSoFar: Partial<Representation>,
@@ -28,7 +22,7 @@ export class MapBlockParser implements BlockParser {
     const hasNameHeader = first4Bytes === "Map\0";
     this.currentBlock.format = hasNameHeader ? 2 : 1;
     if (this.currentBlock.format === 1) this.reader.seek(0);
-    this.currentBlock.name = 'Map';
+    this.currentBlock.name = "Map";
   }
 
   private parseVersion(): void {
