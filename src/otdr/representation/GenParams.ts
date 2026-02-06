@@ -1,5 +1,5 @@
 // REF: http://www.ciscopress.com/articles/article.asp?p=170740&seqNum=7
-type FiberType =
+export type FiberType =
   | "G.651 (50um core multimode)"
   | "G.652 (standard SMF)"
   | "G.653 (dispersion-shifted fiber)"
@@ -7,11 +7,24 @@ type FiberType =
   | "G.655 (nonzero dispersion-shifted fiber)"
   | "unknown";
 
-type BuildCondition =
-  | { raw: "BC"; normalized: "as-built" }
-  | { raw: "CC"; normalized: "as-current" }
-  | { raw: "RC"; normalized: "as-repaired" }
-  | { raw: "OT"; normalized: "other" }
+export const buildConditionByRaw = {
+  BC: "as-built",
+  CC: "as-current",
+  RC: "as-repaired",
+  OT: "other",
+} as const;
+
+export type KnownRawBuildCondition = keyof typeof buildConditionByRaw;
+
+export type KnownBuildCondition = {
+  [Key in keyof typeof buildConditionByRaw]: {
+    raw: Key;
+    normalized: (typeof buildConditionByRaw)[Key];
+  };
+}[keyof typeof buildConditionByRaw];
+
+export type BuildCondition =
+  | KnownBuildCondition
   | { raw: string; normalized: "unknown" };
 
 export type GenParams = {
