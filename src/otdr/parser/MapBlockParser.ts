@@ -3,6 +3,8 @@ import type { Representation } from "../representation/Representation";
 import { BlockParser } from "./BlockParser";
 
 export class MapBlockParser extends BlockParser {
+  // TODO: remove currentBlock, make local variable instead
+  // and instead of parse<something> make read<something>
   private currentBlock: Partial<MapBlock> = {};
 
   public parse(

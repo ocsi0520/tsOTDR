@@ -7,6 +7,7 @@ import {
 } from "../representation/block-names";
 import { GenParamsBlockParser } from "./GenParamsBlockParser";
 import { SupParamsBlockParser } from "./SupParamsBlockParser";
+import { FxdParamsBlockParser } from "./FxdParamsBlockParser";
 
 export class BlockParserFactory {
   public createParser(
@@ -27,6 +28,7 @@ export class BlockParserFactory {
       case "SupParams":
         return new SupParamsBlockParser(reader);
       case "FxdParams":
+        return new FxdParamsBlockParser(reader);
       case "KeyEvents":
       case "DataPts":
       case "LnkParams":

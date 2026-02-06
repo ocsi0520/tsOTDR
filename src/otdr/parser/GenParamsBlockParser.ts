@@ -18,6 +18,8 @@ export class GenParamsBlockParser extends BlockParser {
     655: "G.655 (nonzero dispersion-shifted fiber)",
   };
 
+  // TODO: remove currentBlock, make local variable instead
+  // and instead of parse<something> make read<something>
   private currentBlock: Partial<GenParams> = {};
   public parse(
     dataParsedSoFar: Partial<Representation>,
