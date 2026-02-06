@@ -1,5 +1,6 @@
 import "./style.css";
 import { OtdrConverter } from './otdr/otdr-converter';
+import { OdtrParser } from "./otdr/otdr-parser";
 
 const convertButton =
   document.querySelector<HTMLButtonElement>("button#convert")!;
@@ -9,11 +10,11 @@ convertButton.onclick = async () => {
     alert('no file was selected');
     return;
   }
-  const [file] = fileInput.files;
+  const [inputFile] = fileInput.files;
   try {
+    const outputFile = await new OtdrConverter(new OdtrParser()).convert(inputFile);
     // TODO: handle response
-    new OtdrConverter().convert(file);
-
+    console.log(outputFile.name);
   } catch (e) {
     const typedError = e as Error;
     alert("an error has occurred: " + typedError.message);
