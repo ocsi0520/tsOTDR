@@ -28,6 +28,7 @@ export class MapBlockParser implements BlockParser {
     const hasNameHeader = first4Bytes === "Map\0";
     this.currentBlock.format = hasNameHeader ? 2 : 1;
     if (this.currentBlock.format === 1) this.reader.seek(0);
+    this.currentBlock.name = 'Map';
   }
 
   private parseVersion(): void {

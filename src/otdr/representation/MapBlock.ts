@@ -14,6 +14,7 @@ export type BlockDescriptor = {
 };
 
 export type MapBlock = {
+  name: "Map";
   format: 1 | 2;
   version: {
     // if the version is 1.2, then the original number from SOR is 120
