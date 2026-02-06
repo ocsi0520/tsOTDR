@@ -1,17 +1,34 @@
 // depends on FxdParams
 
+import type { AssociateType } from "../../utility/associate-type";
+
 // from keyevents#63
 // var factor = 1e-4 * parts.sol / parseFloat(results['FxdParams']['index']);
 
 // time-of-travel - in units of 0.1 nanoseconds --> 0.001
 
-// 0 - loss or gain in power; 1 - reflelction; 2 - "multiple event"
-type EventPower = "0" | "1" | "2";
+export const eventSubtypeByRaw = {
+  "0": "loss/drop/gain",
+  "1": "reflection",
+  "2": "multiple",
+} as const;
 
-// represents/correlate w/ mode,  e - means end of the fiber, A - auto, rest are unknown
-type Mode = "A" | "E" | "F" | "M" | "D";
+export type EventSubtypeAssociation = AssociateType<typeof eventSubtypeByRaw>;
 
-export type KeyEvents = {
+export const eventModeByRaw = {
+  A: "Auto",
+  E: "end of fiber",
+  F: "unknown F",
+  M: "unknown M",
+  D: "unknown D",
+} as const;
+
+export type EventModeAssociation = AssociateType<typeof eventModeByRaw>;
+
+export type RawEventType =
+  `${EventSubtypeAssociation["Raw"]}${EventModeAssociation["Raw"]}${string}`;
+
+export type KeyEventBlock = {
   name: "KeyEvents";
 
   // 2 bytes unsigned int
@@ -22,6 +39,8 @@ export type KeyEvents = {
   summary: KeyEventsSummary;
 };
 
+export const eventSubTypes = [, "reflection", "multiple"] as const;
+
 // altogether 42 bytes in v2
 // everywhere precision is 3
 export type KeyEvent = {
@@ -29,11 +48,12 @@ export type KeyEvent = {
   eventNumber: number;
 
   // 4 bytes unsigned int, in units of 0.1 nanoseconds
-  timeOfTravel: number;
-
-  // not in file
-  // (distance in kilometers) = (integer value) * 10^-4 * c / (refractive index)
-  calculatedDistance: number;
+  timeOfTravel: {
+    raw: number;
+    // not in file
+    // (distance in kilometers) = (integer value) * 10^-4 * c / (refractive index)
+    calculatedDistance: number;
+  };
 
   slope: {
     // 2 bytes signed integer, multiplication 0.001
@@ -44,20 +64,23 @@ export type KeyEvent = {
   spliceLoss: {
     // 2 bytes signed integer, multiplication 0.001
     raw: number;
-    inDb: number;
+    inDecibel: number;
   };
 
   reflectionLoss: {
     // 4 bytes signed integer, multiplication 0.001
     raw: number;
-    inDb: number;
+    inDecibel: number;
   };
 
   eventType: {
     // 8 characters, format: nx9999LS, TODO: check whether it has \0
-    raw: `${EventPower}${Mode}${string}`;
+    raw: RawEventType;
     // TODO: check https://github.com/sid5432/jsOTDR/blob/master/lib/keyevents.js#L80
-    normalized: string;
+    extraInfo: {
+      subtype: EventSubtypeAssociation["Normalized"] | "unknown";
+      mode: EventModeAssociation["Normalized"] | "unknown";
+    };
   };
 
   endOfPreviousEvent?: {
@@ -94,6 +117,7 @@ export type KeyEvent = {
     raw: number; // equals range if last event
     inKm: number; // raw * factor
   };
+  comment: string; // until \0
 };
 
 export type KeyEventsSummary = {
