@@ -1,8 +1,8 @@
 import { OtdrReader } from "./OtdrReader";
 
 export class ReaderFactory {
-    public createReader(arrayBuffer: ArrayBuffer): OtdrReader {
-        const dataView = new DataView(arrayBuffer)
+    public async createReader(file: File): Promise<OtdrReader> {
+        const dataView = new DataView(await file.arrayBuffer())
         return new OtdrReader(dataView);
     }
 }
