@@ -1,7 +1,4 @@
-export type RequiredBlockName = "GenParams" | "SupParams" | "FxdParams";
-// keyevent is required if no dataps is present and vica-versa
-export type OptionalBlockName = "KeyEvents" | "DataPts" | "LnkParams" | "Cksum";
-export type KnownBlockName = RequiredBlockName | OptionalBlockName;
+import type { KnownBlockName } from "./block-names";
 
 export type BlockDescriptor = {
   name: KnownBlockName | string; // terminated by '\0'
@@ -9,7 +6,7 @@ export type BlockDescriptor = {
     // if the version is 1.2, then the original number from SOR is 120
     raw: number;
     normalized: number; // = raw / 100
-  }
+  };
   size: number; // unsigned 4 bytes
 
   positionInBinaryFile: number;
@@ -22,7 +19,7 @@ export type MapBlock = {
     // if the version is 1.2, then the original number from SOR is 120
     raw: number;
     normalized: number;
-  }
+  };
   normalizedVersion: number;
   size: number; // nbytes
   map: {
