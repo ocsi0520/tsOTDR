@@ -1,9 +1,13 @@
-type Unit =
-  | { raw: "mt"; normalized: "meters" }
-  | { raw: "km"; normalized: "kilometers" }
-  | { raw: "mi"; normalized: "miles" }
-  | { raw: "kf"; normalized: "kilo-feet" }
-  | { raw: string; normalized: "unknown"};
+import type { AssociateType } from "../../utility/associate-type";
+
+export const knownUnitsByRaw = {
+  mt: "meters",
+  km: "kilometers",
+  mi: "miles",
+  kf: "kilo-feet",
+} as const;
+
+export type UnitAssociation = AssociateType<typeof knownUnitsByRaw>;
 
 export type PulseEntry = {
   pulseWidthInNanoSeconds: number; // unsigned 2 bytes
@@ -28,11 +32,14 @@ export type PulseEntry = {
   numberOfDataPoints: number;
 };
 
-type TraceType =
-| { raw: 'ST'; normalized: "standard trace"; }
-| { raw: 'RT'; normalized: "reverse trace"; }
-| { raw: 'DT'; normalized: "difference trace"; }
-| { raw: 'RF'; normalized: "reference"; }
+export const traceTypesByRaw = {
+  ST: "standard trace",
+  RT: "reverse trace",
+  DT: "difference trace",
+  RF: "reference",
+} as const;
+
+export type TraceTypeAssociation = AssociateType<typeof traceTypesByRaw, false>;
 
 export type FxdParams = {
   name: "FxdParams";
@@ -40,7 +47,7 @@ export type FxdParams = {
     secondsSinceEpoch: number; // 4 bytes unsigned
     normalized: Date;
   };
-  unit: Unit; // 2 byte chars w/out \0
+  unit: UnitAssociation["Unified"]; // 2 byte chars w/out \0
 
   waveLength: {
     // 10 times of wavelength in nanometers, but not every time...
@@ -54,11 +61,11 @@ export type FxdParams = {
    * the next three parameter (pulse-width, sample spacing, and number of data points)
    * are repeated. This corresponds to the number of traces in the data block
    * (described elsewhere)
-   * 
+   *
    * usually 1
    */
   numberOfPulseWidthEntries: number; // unsigned 2 bytes
-  pulseEntries: Array<PulseEntry>;  // length = numberOfPulseWidthEntries
+  pulseEntries: Array<PulseEntry>; // length = numberOfPulseWidthEntries
   /**
    * The refractive index is represented as an unsigned integer that is 10^5 times
    * the value of the index of refraction (IOR).
@@ -68,24 +75,25 @@ export type FxdParams = {
     // 1e-5 multiplier
     // precision 6? --- 6 tizedesjegyre kerekiti (string-ge valik)
     raw: number;
-    normalized: number; 
+    normalized: number;
   };
   backscatteringCoefficient: {
     // 2 unsigned bytes, -0.1 multiplier, precision is 2
     raw: number;
     inDecibel: number;
-  }
+  };
   /**
    * I have failed to discover what determines the multiple.
    * I might be completely wrong in assuming that this the number of averages!
    */
   // unsigned 4 bytes
   numberOfAverages: number;
-  averagingTime?: { // only in v2
+  averagingTime?: {
+    // only in v2
     // unsigned 2 bytes, multiplier 0.1, 0 precision, unit: sec
     raw: number;
     inSeconds: number;
-  }
+  };
   /**
    * Excerpt:
    * ...multiply by 2*10^-5. However, this is not quite right.
@@ -95,8 +103,7 @@ export type FxdParams = {
     // 4 unsigned bytes, multiplier: 2e-5, prec: 6, unit: km
     raw: number;
     inKm: number;
-  }
-
+  };
 
   // for the following 5 properties, we don't know the units and multipliers
   // 4 bytes signed integer
@@ -114,19 +121,19 @@ export type FxdParams = {
     // 2 bytes unsigned, 0.001 multiplier, 3 precision, unit: db
     raw: number;
     inDecibel: number;
-  }
+  };
   reflectionThreshold: {
     // 2 bytes unsigned, -0.001 multiplier, 3 precision, unit: db
     raw: number;
     inDecibel: number;
-  }
+  };
   endOfTransmissionThreshold: {
     // 2 bytes unsigned, 0.001 multiplier, 3 precision, unit: db
     raw: number;
     inDecibel: number;
-  }
+  };
 
-  traceType?: TraceType; // only v2
+  traceType?: TraceTypeAssociation["Unified"]; // only v2
 
   unknownRegionOrWindow: {
     // al of them are signed 4 bytes
@@ -134,5 +141,5 @@ export type FxdParams = {
     y1: number;
     x2: number;
     y2: number;
-  }
+  };
 };

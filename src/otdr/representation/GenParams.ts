@@ -1,3 +1,5 @@
+import type { AssociateType } from "../../utility/associate-type";
+
 // REF: http://www.ciscopress.com/articles/article.asp?p=170740&seqNum=7
 export type FiberType =
   | "G.651 (50um core multimode)"
@@ -14,18 +16,7 @@ export const buildConditionByRaw = {
   OT: "other",
 } as const;
 
-export type KnownRawBuildCondition = keyof typeof buildConditionByRaw;
-
-export type KnownBuildCondition = {
-  [Key in keyof typeof buildConditionByRaw]: {
-    raw: Key;
-    normalized: (typeof buildConditionByRaw)[Key];
-  };
-}[keyof typeof buildConditionByRaw];
-
-export type BuildCondition =
-  | KnownBuildCondition
-  | { raw: string; normalized: "unknown" };
+export type BuildConditionAssociation = AssociateType<typeof buildConditionByRaw>;
 
 export type GenParams = {
   name: "GenParams";
@@ -43,7 +34,7 @@ export type GenParams = {
     B: string;
   };
   cableCodeOrFiberType: string; // vary from vendor to vendor
-  buildCondition: BuildCondition; // 2 byte characters w/ out terminating '\0'
+  buildCondition: BuildConditionAssociation['Unified']; // 2 byte characters w/ out terminating '\0'
   // don't know the units of the following 2
   userOffset: number; // signed 4 bytes
   userOffsetDistance?: number; // signed 4 bytes (only in version 2)

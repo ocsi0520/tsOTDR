@@ -1,9 +1,8 @@
 import {
   buildConditionByRaw,
-  type BuildCondition,
+  type BuildConditionAssociation,
   type FiberType,
   type GenParams,
-  type KnownRawBuildCondition,
 } from "../representation/GenParams";
 import type { Representation } from "../representation/Representation";
 import { BlockParser } from "./BlockParser";
@@ -64,13 +63,13 @@ export class GenParamsBlockParser extends BlockParser {
   }
 
   private parseBuildCondition(): void {
-    const rawBuildCondition = this.reader.readFixedString(2);
-    const normalized =
-      buildConditionByRaw[rawBuildCondition as KnownRawBuildCondition] ||
-      "unknown";
+    const rawBuildCondition = this.reader.readFixedString(
+      2,
+    ) as BuildConditionAssociation["Raw"];
+    const normalized = buildConditionByRaw[rawBuildCondition] || "unknown";
     this.currentBlock.buildCondition = {
       raw: rawBuildCondition,
       normalized,
-    } as BuildCondition;
+    };
   }
 }
