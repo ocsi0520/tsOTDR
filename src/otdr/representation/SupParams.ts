@@ -1,4 +1,5 @@
 export type SupParams = {
+  name: "SupParams";
   supplierName: string;
   Otdr: {
     name: string;
@@ -8,6 +9,6 @@ export type SupParams = {
     name: string;
     serialNumber: string;
   }
-  softwareVersion: number;
+  softwareVersion: string;
   other: string;
 };
