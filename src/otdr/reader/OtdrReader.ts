@@ -1,5 +1,5 @@
-type ByteSize = 1 | 2 | 4;
-type BitSize = 8 | 16 | 32;
+export type ByteSize = 1 | 2 | 4;
+export type BitSize = 8 | 16 | 32;
 
 export class OtdrReader {
   private static LITTLE_ENDIAN_MODE = true;
