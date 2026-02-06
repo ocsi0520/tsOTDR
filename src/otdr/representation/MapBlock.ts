@@ -10,7 +10,7 @@ export type BlockDescriptor = {
     raw: number;
     normalized: number; // = raw / 100
   }
-  size: number; // 4 bytes
+  size: number; // unsigned 4 bytes
 
   positionInBinaryFile: number;
   index: number;
@@ -18,12 +18,15 @@ export type BlockDescriptor = {
 
 export type MapBlock = {
   format: 1 | 2;
-  version: number;
-  // if the version is 1.2, then the original number from SOR is 120
+  version: {
+    // if the version is 1.2, then the original number from SOR is 120
+    raw: number;
+    normalized: number;
+  }
   normalizedVersion: number;
   size: number; // nbytes
-  blockDescription: {
+  map: {
     countOfBlocksWithThis: number;
-    contentBlockDescription: Array<BlockDescriptor>;
+    blockDescriptors: Array<BlockDescriptor>;
   };
 };
