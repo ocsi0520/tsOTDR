@@ -6,7 +6,7 @@ import type { BlockParser } from "./BlockParser";
 export class MapBlockParser implements BlockParser {
   private reader: OtdrReader;
   private currentBlock: Partial<MapBlock> = {};
-  // TODO: maybe reader should be rather passed down to parse
+
   constructor(reader: OtdrReader) {
     this.reader = reader;
   }

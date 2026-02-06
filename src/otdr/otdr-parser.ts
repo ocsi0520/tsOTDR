@@ -8,11 +8,22 @@ export class OdtrParser {
     this.blockParserFactory = parserFactory;
   }
   public parse(reader: OtdrReader): Representation {
-    const mapBlockParser = this.blockParserFactory.createParser("Map", reader);
-
     let representationSoFar: Partial<Representation> = {};
+    const mapBlockParser = this.blockParserFactory.createParser("Map", reader);
     representationSoFar = mapBlockParser.parse(representationSoFar);
+    const blockDescriptors = representationSoFar.mapBlock!.map.blockDescriptors;
+
+    for (let blockDescriptor of blockDescriptors) {
+      // TODO: remove log
+      console.log(representationSoFar);
+      const parser = this.blockParserFactory.createParser(
+        blockDescriptor.name,
+        reader,
+      );
+      representationSoFar = parser.parse(representationSoFar);
+    }
+
     console.log({ representationSoFar });
-    throw new Error("not implemented yet");
+    return representationSoFar as Representation;
   }
 }
