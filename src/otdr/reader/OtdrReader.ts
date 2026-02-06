@@ -1,4 +1,8 @@
+type ByteSize = 1 | 2 | 4;
+type BitSize = 8 | 16 | 32;
+
 export class OtdrReader {
+  private static LITTLE_ENDIAN_MODE = true;
   private offset: number;
   private view: DataView;
   constructor(dataView: DataView, offset = 0) {
@@ -6,11 +10,12 @@ export class OtdrReader {
     this.offset = offset;
   }
 
-  public seek(pos: number) {
+  public seek(pos: number): void {
     this.offset = pos;
   }
-  public rewind() {
-    this.offset = 0;
+
+  public getPosition(): number {
+    return this.offset;
   }
 
   // TODO: test for utf-8 multiple byte-characters
@@ -19,7 +24,7 @@ export class OtdrReader {
     let lastCharacter: string;
 
     do {
-      lastCharacter = String.fromCharCode(this.getUint8());
+      lastCharacter = String.fromCharCode(this.readUnsignedInt(1));
       characters.push(lastCharacter);
     } while (lastCharacter !== "\0");
 
@@ -31,49 +36,25 @@ export class OtdrReader {
   public readFixedString(length: number): string {
     const characters: Array<string> = [];
     for (let i = 0; i < length; i++) {
-      characters.push(String.fromCharCode(this.getUint8()));
+      characters.push(String.fromCharCode(this.readUnsignedInt(1)));
     }
-    return characters.join();
+    return characters.join("");
   }
 
-  public getUint8(): number {
-    return this.view.getUint8(this.offset++);
+  public readUnsignedInt(byteSize: ByteSize): number {
+    return this.readInt(false, byteSize);
   }
 
-  public getUint16(): number {
-    const value = this.view.getUint16(this.offset, true);
-    this.offset += 2;
-    return value;
-  }
-
-  public getUint32(): number {
-    const value = this.view.getUint32(this.offset, true);
-    this.offset += 4;
-    return value;
-  }
-
-  public getInt8(): number {
-    return this.view.getInt8(this.offset++);
-  }
-
-  public getInt16(): number {
-    const value = this.view.getInt16(this.offset, true);
-    this.offset += 2;
-    return value;
-  }
-
-  public getInt32(): number {
-    const value = this.view.getInt32(this.offset, true);
-    this.offset += 4;
-    return value;
+  public readSignedInt(byteSize: ByteSize): number {
+    return this.readInt(true, byteSize);
   }
 
   // TODO: check
-  public getInt(isSigned: boolean, byteSize: 1 | 2 | 4): number {
-    const bitSize = (byteSize * 8) as 8 | 16 | 32;
+  private readInt(isSigned: boolean, byteSize: ByteSize): number {
+    const bitSize = (byteSize * 8) as BitSize;
     const methodPrefix = isSigned ? "getInt" : "getUint";
     const methodName = `${methodPrefix}${bitSize}` as const;
-    const value = this.view[methodName](bitSize, true);
+    const value = this.view[methodName](this.offset, OtdrReader.LITTLE_ENDIAN_MODE);
     this.offset += byteSize;
     return value;
   }
