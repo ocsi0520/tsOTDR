@@ -10,7 +10,6 @@ export type BlockDescriptor = {
     raw: number;
     normalized: number; // = raw / 100
   }
-  normalizedVersion: number;
   size: number; // 4 bytes
 
   positionInBinaryFile: number;
