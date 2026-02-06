@@ -4,14 +4,13 @@ import { MapBlockParser } from "./MapBlockParser";
 import type { BlockParser } from "./BlockParser";
 
 export class BlockParserFactory {
-  private reader: OtdrReader;
-  constructor(reader: OtdrReader) {
-    this.reader = reader;
-  }
-  public createParserFor(blockName: KnownBlockName | "Map"): BlockParser {
+  public createParser(
+    blockName: KnownBlockName | "Map",
+    reader: OtdrReader,
+  ): BlockParser {
     switch (blockName) {
       case "Map":
-        return new MapBlockParser(this.reader);
+        return new MapBlockParser(reader);
       // TODO: implement
       case "GenParams":
       case "SupParams":
