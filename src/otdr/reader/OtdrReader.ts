@@ -3,11 +3,14 @@ export type BitSize = 8 | 16 | 32;
 
 export class OtdrReader {
   private static LITTLE_ENDIAN_MODE = true;
-  private offset: number;
+  private offset: number = 0;
   private view: DataView;
-  constructor(dataView: DataView, offset = 0) {
+  constructor(dataView: DataView) {
     this.view = dataView;
-    this.offset = offset;
+  }
+
+  public getFileSizeInBytes(): number {
+    return this.view.byteLength;
   }
 
   public seek(pos: number): void {
@@ -49,12 +52,14 @@ export class OtdrReader {
     return this.readInt(true, byteSize);
   }
 
-  // TODO: check
   private readInt(isSigned: boolean, byteSize: ByteSize): number {
     const bitSize = (byteSize * 8) as BitSize;
     const methodPrefix = isSigned ? "getInt" : "getUint";
     const methodName = `${methodPrefix}${bitSize}` as const;
-    const value = this.view[methodName](this.offset, OtdrReader.LITTLE_ENDIAN_MODE);
+    const value = this.view[methodName](
+      this.offset,
+      OtdrReader.LITTLE_ENDIAN_MODE,
+    );
     this.offset += byteSize;
     return value;
   }
