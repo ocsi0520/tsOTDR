@@ -74,9 +74,8 @@ export type KeyEvent = {
   };
 
   eventType: {
-    // 8 characters, format: nx9999LS, TODO: check whether it has \0
+    // 8 characters, format: nx9999LS
     raw: RawEventType;
-    // TODO: check https://github.com/sid5432/jsOTDR/blob/master/lib/keyevents.js#L80
     extraInfo: {
       subtype: EventSubtypeAssociation["Normalized"] | "unknown";
       mode: EventModeAssociation["Normalized"] | "unknown";

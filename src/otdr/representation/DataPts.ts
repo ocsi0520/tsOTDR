@@ -1,5 +1,3 @@
-// TODO: need to re-check jsOTDR/lib/datapts.js to write reader
-
 // depends on FxdParam, i.e. resolution
 export type DataPts = {
   name: "DataPts";
