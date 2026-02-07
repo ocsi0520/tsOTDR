@@ -9,7 +9,7 @@ export class OdtrParser {
   }
   public parse(reader: OtdrReader): Representation {
     let representationSoFar: Partial<Representation> = {};
-    const mapBlockParser = this.blockParserFactory.createParser("Map", reader);
+    const mapBlockParser = this.blockParserFactory.createMapBlockParser(reader);
     representationSoFar = mapBlockParser.parse(representationSoFar);
     const blockDescriptors = representationSoFar.mapBlock!.map.blockDescriptors;
 
@@ -17,7 +17,7 @@ export class OdtrParser {
       // TODO: remove log
       console.log(representationSoFar);
       const parser = this.blockParserFactory.createParser(
-        blockDescriptor.name,
+        blockDescriptor,
         reader,
       );
       representationSoFar = parser.parse(representationSoFar);

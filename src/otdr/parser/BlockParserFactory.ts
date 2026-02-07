@@ -1,30 +1,29 @@
 import type { OtdrReader } from "../reader/OtdrReader";
 import { MapBlockParser } from "./MapBlockParser";
 import type { BlockParser } from "./BlockParser";
-import {
-  knownBlockNames,
-  type KnownBlockName,
-} from "../representation/block-names";
 import { GenParamsBlockParser } from "./GenParamsBlockParser";
 import { SupParamsBlockParser } from "./SupParamsBlockParser";
 import { FxdParamsBlockParser } from "./FxdParamsBlockParser";
 import { KeyEventsBlockParser } from "./KeyEventsBlockParser";
 import { DataPtsBlockParser } from "./DataPtsBlockParser";
+import { SkippingBlockParser } from "./SkippingBlockParser";
+import type { BlockDescriptor } from "../representation/MapBlock";
 
 export class BlockParserFactory {
-  public createParser(
-    blockName: KnownBlockName,
-    reader: OtdrReader,
-  ): BlockParser;
-  public createParser(blockName: string, reader: OtdrReader): BlockParser;
-  public createParser(blockName: string, reader: OtdrReader): BlockParser {
-    if (!this.isKnownBlockName(blockName))
-      throw new Error("no parser found for blockname: " + blockName);
+  public createMapBlockParser(reader: OtdrReader) {
+    return new MapBlockParser(reader);
+  }
 
+  public createParser(
+    blockDescriptor: BlockDescriptor,
+    reader: OtdrReader,
+  ): BlockParser {
+    const blockName = blockDescriptor.name;
     switch (blockName) {
       case "Map":
-        return new MapBlockParser(reader);
-      // TODO: implement
+        throw new Error(
+          "Map should not be present twice. If this is the first time, then rather use createMapBlockParser() fn",
+        );
       case "GenParams":
         return new GenParamsBlockParser(reader);
       case "SupParams":
@@ -36,14 +35,12 @@ export class BlockParserFactory {
       case "DataPts":
         return new DataPtsBlockParser(reader);
       case "LnkParams":
-      // TODO: LnkParams is missing from jsODTR, most probably it is solved by
-      // "slurping"
+        // LnkParams is missing from jsODTR, most probably it is solved by "slurping"
+        return new SkippingBlockParser(reader, blockDescriptor); // used to be "slurping" in jsODTR
       case "Cksum":
         throw new Error("no implementation yet for: " + blockName);
+      default:
+        return new SkippingBlockParser(reader, blockDescriptor); // used to be "slurping" in jsODTR
     }
-  }
-
-  private isKnownBlockName(blockName: string): blockName is KnownBlockName {
-    return knownBlockNames.includes(blockName as KnownBlockName);
   }
 }
