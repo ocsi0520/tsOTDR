@@ -4,7 +4,7 @@
 export type DataPts = {
   name: "DataPts";
 
-  // extra parameters ????
+  // see comment at DataPtsBlockParser: offset is always set to STV
   // method used by STV: minimum reading shifted to zero
   // method used by AFL/Noyes Trace.Net: maximum reading shifted to zero (approx)
 
@@ -28,7 +28,9 @@ export type DataPts = {
 export type TraceDatum = {
   // 4 bytes unsigned int
   // same as number of data points in FxdParams block
-  repeatOfNumberOfDataPoints: number;
+  // most probably in case of multiple traces, this is the count of the current traces' data point
+  // which allegedly never happens
+  numberOfDataPointsInTrace: number;
 
   scalingFactor: {
     // 2 bytes (unsigned integer)
@@ -36,20 +38,21 @@ export type TraceDatum = {
     normalized: number; // = raw / 1000
   };
 
-  // at least one, length = numberOfDataPoints or repeatOfNumberOfDataPoints
-  traceValues: Array<TraceValue>;
+  // at least one, length = numberOfDataPointsInTrace
+  traceValues: Array<number>; // 2 bytes unsigned int each
 
   calculatedBeforeOffset: {
     max: number;
     min: number;
   };
 
-  // TODO: check tracedata (in jsOTDR), as it is modified:
-  // added calculated data based on nlist
-  // nlist is calculated from traceData (the property here) and offset
+  // this is nlist, which is the mapped traceValues (dlist)
+  // https://github.com/sid5432/jsOTDR/blob/master/lib/datapts.js#L135
+  mappedTraceValues: Array<MappedTraceValue>;
 };
 
-export type TraceValue = {
-  // 2 bytes unsigned int
-  value: number;
-};
+export type MappedTraceValue = {
+  nlistValue: number;
+  whateverValue: number;
+}
+

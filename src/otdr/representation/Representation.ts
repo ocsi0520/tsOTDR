@@ -1,3 +1,4 @@
+import type { DataPts } from "./DataPts";
 import type { FxdParams } from "./FxdParams";
 import type { GenParams } from "./GenParams";
 import type { KeyEventBlock } from "./KeyEvents";
@@ -10,5 +11,6 @@ export type Representation = {
   supParamsBlock: SupParams;
   fxdParamsBlock: FxdParams;
   keyEventBlock: KeyEventBlock;
+  dataPtsBlock: DataPts;
   // TODO: rest of them
 };
