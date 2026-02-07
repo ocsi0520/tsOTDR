@@ -14,8 +14,6 @@ export class OdtrParser {
     const blockDescriptors = representationSoFar.mapBlock!.map.blockDescriptors;
 
     for (let blockDescriptor of blockDescriptors) {
-      // TODO: remove log
-      console.log(representationSoFar);
       const parser = this.blockParserFactory.createParser(
         blockDescriptor,
         reader,
