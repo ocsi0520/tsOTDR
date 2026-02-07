@@ -8,6 +8,7 @@ import { KeyEventsBlockParser } from "./KeyEventsBlockParser";
 import { DataPtsBlockParser } from "./DataPtsBlockParser";
 import { SkippingBlockParser } from "./SkippingBlockParser";
 import type { BlockDescriptor } from "../representation/MapBlock";
+import { CksumBlockParser } from "./CksumBlockParser";
 
 export class BlockParserFactory {
   public createMapBlockParser(reader: OtdrReader) {
@@ -38,8 +39,9 @@ export class BlockParserFactory {
         // LnkParams is missing from jsODTR, most probably it is solved by "slurping"
         return new SkippingBlockParser(reader, blockDescriptor); // used to be "slurping" in jsODTR
       case "Cksum":
-        throw new Error("no implementation yet for: " + blockName);
+        return new CksumBlockParser(reader);
       default:
+        // there are some vendor-specific blocks, that was neither specified nor reverse-engineered
         return new SkippingBlockParser(reader, blockDescriptor); // used to be "slurping" in jsODTR
     }
   }
