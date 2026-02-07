@@ -19,7 +19,10 @@ convertButton.onclick = async () => {
     const facadeParser = new OdtrParser(parserFactory);
 
     const readerFactory = new ReaderFactory();
-    const outputFile = await new OtdrToXlsxConverter(facadeParser, readerFactory).convert(inputFile);
+    const outputFile = await new OtdrToXlsxConverter(
+      facadeParser,
+      readerFactory,
+    ).convert(inputFile);
     // TODO: handle response
     console.log(outputFile.name);
   } catch (e) {

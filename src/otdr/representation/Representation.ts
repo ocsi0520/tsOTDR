@@ -1,3 +1,4 @@
+import type { Cksum } from "./Cksum";
 import type { DataPts } from "./DataPts";
 import type { FxdParams } from "./FxdParams";
 import type { GenParams } from "./GenParams";
@@ -12,5 +13,5 @@ export type Representation = {
   fxdParamsBlock: FxdParams;
   keyEventBlock: KeyEventBlock;
   dataPtsBlock: DataPts;
-  // TODO: rest of them
+  CksumBlock: Cksum;
 };
