@@ -1,5 +1,5 @@
 import type { Representation } from "../../otdr/representation/Representation";
-import writeXlsxFile, { type SheetData } from "write-excel-file";
+import writeXlsxFile, { type Columns, type SheetData } from "write-excel-file";
 import type { HeaderCellDataFactory as HeaderCellDataFactory } from "./HeaderCellDataFactory";
 
 // options: - https://sheetjs.com/ (no styling)
@@ -18,6 +18,7 @@ export class XlsxConverter {
     const xlsxBlob = await writeXlsxFile(this.gatherAllParts(representation), {
       dateFormat: "yyyy.mm.dd",
       fontSize: 10,
+      columns: this.getColumnWeights([[17, 17]]),
     });
     return new File([xlsxBlob], this.getFileName(representation), {
       // application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
@@ -40,5 +41,22 @@ export class XlsxConverter {
 
   private getNormalizedName(operatorName: string): string {
     return operatorName.replaceAll(" ", "_");
+  }
+
+  /**
+   *
+   * @param columnDescriptors tuple of `column number` (1-based) and its `width` in characters
+   */
+  private getColumnWeights(
+    columnDescriptors: Array<[columnNumber: number, width: number]>,
+  ): Columns {
+    const maxColumn = Math.max(...columnDescriptors.map((descr) => descr[1]));
+    const columns: Columns = [];
+    for (let i = 1; i <= maxColumn; i++) {
+      const width = columnDescriptors.find((descr) => descr[0] === i)?.[1];
+      columns.push(width !== undefined ? { width } : {});
+    }
+
+    return columns;
   }
 }
