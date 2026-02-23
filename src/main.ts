@@ -4,6 +4,7 @@ import { OdtrParser } from "./otdr/otdr-parser";
 import { BlockParserFactory } from "./otdr/parser/BlockParserFactory";
 import { ReaderFactory } from "./otdr/reader/ReaderFactory";
 import { XlsxConverter } from "./converter/xlsx-converter/XlsxConverter";
+import { HeaderCellDataFactory } from "./converter/xlsx-converter/HeaderCellDataFactory";
 
 const convertButton =
   document.querySelector<HTMLButtonElement>("button#convert")!;
@@ -16,7 +17,8 @@ convertButton.onclick = async () => {
   }
   const [inputFile] = fileInput.files;
   try {
-    const xlsxConverter = new XlsxConverter();
+    // TODO: extract the creation of xlsx converter into another file
+    const xlsxConverter = new XlsxConverter(new HeaderCellDataFactory());
     const parserFactory = new BlockParserFactory();
     const facadeParser = new OdtrParser(parserFactory);
 
@@ -26,10 +28,22 @@ convertButton.onclick = async () => {
       readerFactory,
       xlsxConverter,
     ).convert(inputFile);
-    // TODO: handle response
-    console.log(outputFile.name);
+    downloadFile(outputFile);
   } catch (e) {
     const typedError = e as Error;
     alert("an error has occurred: " + typedError.message);
   }
+};
+
+const downloadFile = (file: File) => {
+  const url = URL.createObjectURL(file);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = file.name || "download.xlsx"; // fallback name
+  document.body.appendChild(a);
+  a.click();
+
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url); // clean up
 };
