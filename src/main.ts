@@ -3,6 +3,7 @@ import { OtdrToXlsxConverter } from "./otdr/otdr-to-xlsx-converter";
 import { OdtrParser } from "./otdr/otdr-parser";
 import { BlockParserFactory } from "./otdr/parser/BlockParserFactory";
 import { ReaderFactory } from "./otdr/reader/ReaderFactory";
+import { XlsxConverter } from "./converter/xlsx-converter/XlsxConverter";
 
 const convertButton =
   document.querySelector<HTMLButtonElement>("button#convert")!;
@@ -15,6 +16,7 @@ convertButton.onclick = async () => {
   }
   const [inputFile] = fileInput.files;
   try {
+    const xlsxConverter = new XlsxConverter();
     const parserFactory = new BlockParserFactory();
     const facadeParser = new OdtrParser(parserFactory);
 
@@ -22,6 +24,7 @@ convertButton.onclick = async () => {
     const outputFile = await new OtdrToXlsxConverter(
       facadeParser,
       readerFactory,
+      xlsxConverter,
     ).convert(inputFile);
     // TODO: handle response
     console.log(outputFile.name);
