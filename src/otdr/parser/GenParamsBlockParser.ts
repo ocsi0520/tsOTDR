@@ -25,7 +25,6 @@ export class GenParamsBlockParser extends BlockParser {
     dataParsedSoFar: Partial<Representation>,
   ): Partial<Representation> {
     const format = dataParsedSoFar.mapBlock?.format || 1;
-    console.log({ format });
     this.currentBlock.name = this.readName(dataParsedSoFar, "GenParams");
     this.currentBlock.lang = this.reader.readFixedString(2);
     this.currentBlock.cableId = this.reader.readStringUntilNull();

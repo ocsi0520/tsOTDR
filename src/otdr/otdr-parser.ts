@@ -20,8 +20,6 @@ export class OdtrParser {
       );
       representationSoFar = parser.parse(representationSoFar);
     }
-
-    console.log({ representationSoFar });
     return representationSoFar as Representation;
   }
 }

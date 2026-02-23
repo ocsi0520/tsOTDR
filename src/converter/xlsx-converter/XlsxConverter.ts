@@ -15,8 +15,6 @@ export class XlsxConverter {
   public async convertRepresentation(
     representation: Representation,
   ): Promise<File> {
-    console.log(representation);
-    console.log(JSON.stringify(representation, null, 2));
     const xlsxBlob = await writeXlsxFile(this.gatherAllParts(representation), {
       dateFormat: "yyyy.mm.dd",
       fontSize: 10,
