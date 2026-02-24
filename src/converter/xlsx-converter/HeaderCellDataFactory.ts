@@ -1,13 +1,22 @@
-import type { Cell, CellObject, Row, SheetData } from "write-excel-file/browser";
+import type {
+  Cell,
+  CellObject,
+  Row,
+  SheetData,
+} from "write-excel-file/browser";
 import type { Representation } from "../../otdr/representation/Representation";
+import type { CellFactory, CellWithSpan } from "./CellFactory";
 
-type CellWithSpan = NonNullable<CellObject> & { span: number };
 type CellBorderDirectionProps = Extract<
   keyof NonNullable<CellObject>,
   `${string}BorderStyle`
 >;
 
 export class HeaderCellDataFactory {
+  private cellFactory: CellFactory;
+  constructor(cellFactory: CellFactory) {
+    this.cellFactory = cellFactory;
+  }
   // TODO: finish
   public getRows(representation: Representation): SheetData {
     const allRows = [
@@ -43,62 +52,49 @@ export class HeaderCellDataFactory {
 
   private getFirstRow(representation: Representation): Row {
     return [
-      ...this.createSpanCell({
+      ...this.cellFactory.createSpanCell({
         span: 8,
         value: "KÖTÉSCSILLAPITÁS ÉRTÉKEK SZÁLANKÉNT",
         fontWeight: "bold",
       }),
-      ...this.getEmptyCells(5), // really empty cells
+      ...this.cellFactory.getEmptyCells(5), // really empty cells
       { value: "Mérés dátuma" },
-      ...this.getEmptyCells(2),
+      ...this.cellFactory.getEmptyCells(2),
       this.getDateOfMeasurementCell(representation),
-      this.getEmptyCell(),
+      this.cellFactory.getEmptyCell(),
     ];
   }
   private getSecondRow(representation: Representation): Row {
     return [
-      ...this.createSpanCell({
+      ...this.cellFactory.createSpanCell({
         value: "Kábel telepítés helye:",
         span: 6,
         borderStyle: "thin",
         topBorderStyle: "thick",
       }),
-      ...this.createSpanCell(this.getLocationCell(representation)),
+      ...this.cellFactory.createSpanCell(this.getLocationCell(representation)),
     ];
   }
 
   // Mérési hullámhossz:						1310 nm		1550 nm		Mérést végezte: Horváth Ádám, Oláh Attila
   private getThirdRow({ genParamsBlock }: Representation): Row {
     return [
-      ...this.createSpanCell({
+      ...this.cellFactory.createSpanCell({
         value: "Mérési hullámhossz:",
         span: 6,
         borderStyle: "thin",
       }),
-      ...this.createSpanCell({
+      ...this.cellFactory.createSpanCell({
         borderStyle: "thin",
         span: 4,
         value: genParamsBlock.waveLengthInNm + " nm",
       }),
-      ...this.createSpanCell({
+      ...this.cellFactory.createSpanCell({
         borderStyle: "thin",
         span: 9,
         value: "Mérést végezte:" + genParamsBlock.operator,
       }),
     ];
-  }
-
-  // TODO: extract SpanCellFactory
-  private getEmptyCell(): Cell {
-    return null;
-  }
-
-  private getEmptyCells(count: number): Cell[] {
-    return Array.from({ length: count }).map(this.getEmptyCell.bind(this));
-  }
-
-  private createSpanCell(spannedCell: CellWithSpan): Cell[] {
-    return [spannedCell, ...this.getEmptyCells(spannedCell.span - 1)];
   }
 
   private getDateOfMeasurementCell(representation: Representation): Cell {
