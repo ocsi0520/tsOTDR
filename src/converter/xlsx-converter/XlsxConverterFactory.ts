@@ -4,6 +4,7 @@ import { CellFactory } from "./CellFactory";
 import { CellStructureUnifier } from "./CellStructureUnifier";
 import { HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import { XlsxConverter } from "./XlsxConverter";
+import { CommentDataFactory } from "./CommentDataFactory";
 
 export class XlsxConverterFactory {
   public createXlsxConverter(): XlsxConverter {
@@ -12,6 +13,7 @@ export class XlsxConverterFactory {
     return new XlsxConverter(
       new HeaderCellDataFactory(cellFactory, frameCreator),
       new ApprovalDataFactory(cellFactory, frameCreator),
+      new CommentDataFactory(cellFactory, frameCreator)
     );
   }
 }

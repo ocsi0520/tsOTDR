@@ -3,6 +3,7 @@ import writeXlsxFile from "write-excel-file";
 import type { HeaderCellDataFactory as HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import type { Columns, SheetData } from "./excel-types";
 import type { ApprovalDataFactory } from "./ApprovalDataFactory";
+import type { CommentDataFactory } from "./CommentDataFactory";
 
 // options: - https://sheetjs.com/ (no styling)
 //          - https://www.npmjs.com/package/write-excel-file (fixed minimatch - https://gitlab.com/catamphetamine/write-excel-file/-/issues/106)
@@ -11,13 +12,16 @@ import type { ApprovalDataFactory } from "./ApprovalDataFactory";
 export class XlsxConverter {
   private headerCellDataFactory: HeaderCellDataFactory;
   private approvalDataFactory: ApprovalDataFactory;
+  private commentDataFactory: CommentDataFactory;
 
   constructor(
     headerCellDataFactory: HeaderCellDataFactory,
     approvalDataFactory: ApprovalDataFactory,
+    commentDataFactory: CommentDataFactory,
   ) {
     this.headerCellDataFactory = headerCellDataFactory;
     this.approvalDataFactory = approvalDataFactory;
+    this.commentDataFactory = commentDataFactory;
   }
 
   public async convertRepresentation(
@@ -38,6 +42,7 @@ export class XlsxConverter {
     return [
       ...this.headerCellDataFactory.getRows(representation),
       ...this.approvalDataFactory.getRows(),
+      ...this.commentDataFactory.getRows(),
     ];
   }
 
