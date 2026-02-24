@@ -1,14 +1,14 @@
 import type { Representation } from "../../otdr/representation/Representation";
 import type { CellFactory } from "./CellFactory";
-import type { BorderStyler } from "./BorderStyler";
+import type { FrameCreator } from "./FrameCreator";
 import type { CellWithSpan, Row, SheetData, CellObject } from "./excel-types";
 
 export class HeaderCellDataFactory {
   private cellFactory: CellFactory;
-  private borderStyler: BorderStyler;
-  constructor(cellFactory: CellFactory, borderStyler: BorderStyler) {
+  private frameCreator: FrameCreator;
+  constructor(cellFactory: CellFactory, frameCreator: FrameCreator) {
     this.cellFactory = cellFactory;
-    this.borderStyler = borderStyler;
+    this.frameCreator = frameCreator;
   }
 
   public getRows(representation: Representation): SheetData {
@@ -24,7 +24,7 @@ export class HeaderCellDataFactory {
 
     const borderedRows: SheetData = [
       allRows[0],
-      ...this.borderStyler.frameFor(allRows.slice(1)),
+      ...this.frameCreator.createFrameFor(allRows.slice(1)),
     ];
 
     return borderedRows;

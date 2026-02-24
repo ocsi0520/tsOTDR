@@ -6,7 +6,7 @@ type CellBorderDirectionProps = Extract<
   `${string}BorderStyle`
 >;
 
-export class BorderStyler {
+export class FrameCreator {
   private unifier: CellStructureUnifier;
   constructor(unifier: CellStructureUnifier) {
     this.unifier = unifier;
@@ -44,7 +44,6 @@ export class BorderStyler {
     );
   }
 
-  // TODO: extract this or rename class
   private colorize(sheetData: RawCell[][]): RawCell[][] {
     return sheetData.map((row) =>
       row.map(
@@ -68,7 +67,7 @@ export class BorderStyler {
     ];
   }
 
-  public frameFor(sheetData: SheetData): SheetData {
+  public createFrameFor(sheetData: SheetData): SheetData {
     const sheetDataWithGrid = this.createThinGrid(sheetData);
     return this.colorize(
       this.thickenLastCellBorder(
