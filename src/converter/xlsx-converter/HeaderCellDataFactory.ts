@@ -1,7 +1,7 @@
-import type { Cell, Row, SheetData } from "write-excel-file/browser";
 import type { Representation } from "../../otdr/representation/Representation";
-import type { CellFactory, CellWithSpan } from "./CellFactory";
+import type { CellFactory } from "./CellFactory";
 import type { BorderStyler } from "./BorderStyler";
+import type { CellWithSpan, Row, SheetData, CellObject } from "./excel-types";
 
 export class HeaderCellDataFactory {
   private cellFactory: CellFactory;
@@ -72,7 +72,7 @@ export class HeaderCellDataFactory {
     ];
   }
 
-  private getDateOfMeasurementCell(representation: Representation): Cell {
+  private getDateOfMeasurementCell(representation: Representation): CellObject {
     return {
       type: Date,
       value: representation.fxdParamsBlock.date.normalized,
