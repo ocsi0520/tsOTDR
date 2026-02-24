@@ -39,6 +39,16 @@ export class BorderStyler {
     };
   }
 
+  // TODO: extract this or rename class
+  private colorize(sheetData: RawCell[][]): RawCell[][] {
+    return sheetData.map((row) =>
+      row.map(
+        (cell) =>
+          cell && { ...this.unifier.unify(cell), backgroundColor: "#F2F2F2" },
+      ),
+    );
+  }
+
   public frameFor(sheetData: SheetData): SheetData {
     const sheetDataWithGrid = this.createThinGrid(sheetData);
     const firstRow = this.thickenLastCellBorder(
@@ -50,6 +60,6 @@ export class BorderStyler {
     const middle = sheetDataWithGrid
       .slice(1, -1)
       .map(this.thickenLastCellBorder.bind(this));
-    return [firstRow, ...middle, lastRow];
+    return this.colorize([firstRow, ...middle, lastRow]);
   }
 }
