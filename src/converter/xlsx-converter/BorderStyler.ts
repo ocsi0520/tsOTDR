@@ -1,10 +1,5 @@
-import type {
-  Cell,
-  CellObject,
-  Row,
-  SheetData,
-} from "write-excel-file/browser";
 import type { CellStructureUnifier } from "./CellStructureUnifier";
+import type { CellObject, RawCell, Row, SheetData } from "./excel-types";
 
 type CellBorderDirectionProps = Extract<
   keyof NonNullable<CellObject>,
@@ -23,7 +18,7 @@ export class BorderStyler {
     const lastIndexOfNonNullCell = row.findLastIndex(Boolean);
     return row.map((cell, index) =>
       cell && index === lastIndexOfNonNullCell
-        ? { ...cell, rightBorderStyle: "thick" }
+        ? { ...this.unifier.unify(cell), rightBorderStyle: "thick" }
         : cell,
     );
   }
@@ -35,10 +30,16 @@ export class BorderStyler {
   private createThinBordersForCellsIn(row: Row): Row {
     return row.map(this.createThinBordersForCell.bind(this));
   }
-  private createThinBordersForCell(cell: Cell): Cell {
+  private createThinBordersForCell(cell: RawCell): RawCell {
     const unified = this.unifier.unify(cell);
     if (!unified) return cell;
-    return { ...unified, borderStyle: "thin" };
+    return {
+      ...unified,
+      leftBorderStyle: "thin",
+      rightBorderStyle: "thin",
+      bottomBorderStyle: "thin",
+      topBorderStyle: "slantDashDot",
+    };
   }
 
   public frameFor(sheetData: SheetData): SheetData {
