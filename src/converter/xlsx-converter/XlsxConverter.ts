@@ -2,16 +2,22 @@ import type { Representation } from "../../otdr/representation/Representation";
 import writeXlsxFile from "write-excel-file";
 import type { HeaderCellDataFactory as HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import type { Columns, SheetData } from "./excel-types";
+import type { ApprovalDataFactory } from "./ApprovalDataFactory";
 
 // options: - https://sheetjs.com/ (no styling)
 //          - https://www.npmjs.com/package/write-excel-file (fixed minimatch - https://gitlab.com/catamphetamine/write-excel-file/-/issues/106)
 //          - https://www.npmjs.com/package/exceljs (minimatch - https://github.com/exceljs/exceljs/issues/3024)
 
-
 export class XlsxConverter {
   private headerCellDataFactory: HeaderCellDataFactory;
-  constructor(headerCellDataFactory: HeaderCellDataFactory) {
+  private approvalDataFactory: ApprovalDataFactory;
+
+  constructor(
+    headerCellDataFactory: HeaderCellDataFactory,
+    approvalDataFactory: ApprovalDataFactory,
+  ) {
     this.headerCellDataFactory = headerCellDataFactory;
+    this.approvalDataFactory = approvalDataFactory;
   }
 
   public async convertRepresentation(
@@ -29,7 +35,10 @@ export class XlsxConverter {
   }
 
   private gatherAllParts(representation: Representation): SheetData {
-    return [...this.headerCellDataFactory.getRows(representation)];
+    return [
+      ...this.headerCellDataFactory.getRows(representation),
+      ...this.approvalDataFactory.getRows(),
+    ];
   }
 
   private getFileName(representation: Representation): `${string}.xlsx` {
