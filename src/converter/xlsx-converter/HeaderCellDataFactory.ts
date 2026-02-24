@@ -1,21 +1,14 @@
-import type {
-  Cell,
-  CellObject,
-  Row,
-  SheetData,
-} from "write-excel-file/browser";
+import type { Cell, Row, SheetData } from "write-excel-file/browser";
 import type { Representation } from "../../otdr/representation/Representation";
 import type { CellFactory, CellWithSpan } from "./CellFactory";
-
-type CellBorderDirectionProps = Extract<
-  keyof NonNullable<CellObject>,
-  `${string}BorderStyle`
->;
+import type { BorderStyler } from "./BorderStyler";
 
 export class HeaderCellDataFactory {
   private cellFactory: CellFactory;
-  constructor(cellFactory: CellFactory) {
+  private borderStyler: BorderStyler;
+  constructor(cellFactory: CellFactory, borderStyler: BorderStyler) {
     this.cellFactory = cellFactory;
+    this.borderStyler = borderStyler;
   }
   // TODO: finish
   public getRows(representation: Representation): SheetData {
@@ -25,29 +18,12 @@ export class HeaderCellDataFactory {
       this.getThirdRow(representation),
     ];
 
-    return this.frameWithThickStyle(allRows);
-  }
-
-  private thickenBorder(row: Row, whichBorder: CellBorderDirectionProps): Row {
-    return row.map((cell) => cell && { ...cell, [whichBorder]: "thick" });
-  }
-  private thickenLastCellBorder(row: Row): Row {
-    const lastIndexOfNonNullCell = row.findLastIndex(Boolean);
-    return row.map((cell, index) =>
-      cell && index === lastIndexOfNonNullCell
-        ? { ...cell, rightBorderStyle: "thick" }
-        : cell,
-    );
-  }
-
-  private frameWithThickStyle(sheetData: SheetData): SheetData {
-    return [
-      this.thickenBorder(sheetData[0], "bottomBorderStyle"),
-      ...sheetData.slice(1, -1).map(this.thickenLastCellBorder.bind(this)),
-      this.thickenLastCellBorder(
-        this.thickenBorder(sheetData.at(-1)!, "bottomBorderStyle"),
-      ),
+    const borderedRows: SheetData = [
+      allRows[0],
+      ...this.borderStyler.frameFor(allRows.slice(1)),
     ];
+
+    return borderedRows;
   }
 
   private getFirstRow(representation: Representation): Row {
@@ -61,7 +37,7 @@ export class HeaderCellDataFactory {
       { value: "Mérés dátuma" },
       ...this.cellFactory.getEmptyCells(2),
       this.getDateOfMeasurementCell(representation),
-      this.cellFactory.getEmptyCell(),
+      ...this.cellFactory.getEmptyCells(2),
     ];
   }
   private getSecondRow(representation: Representation): Row {
@@ -76,7 +52,6 @@ export class HeaderCellDataFactory {
     ];
   }
 
-  // Mérési hullámhossz:						1310 nm		1550 nm		Mérést végezte: Horváth Ádám, Oláh Attila
   private getThirdRow({ genParamsBlock }: Representation): Row {
     return [
       ...this.cellFactory.createSpanCell({
