@@ -1,11 +1,8 @@
 import "./style.css";
 import { OtdrToXlsxConverter } from "./otdr/otdr-to-xlsx-converter";
-import { OdtrParser } from "./otdr/otdr-parser";
-import { BlockParserFactory } from "./otdr/parser/BlockParserFactory";
 import { ReaderFactory } from "./otdr/reader/ReaderFactory";
-import { XlsxConverter } from "./converter/xlsx-converter/XlsxConverter";
-import { HeaderCellDataFactory } from "./converter/xlsx-converter/HeaderCellDataFactory";
-import { CellFactory } from "./converter/xlsx-converter/CellFactory";
+import { XlsxConverterFactory } from "./converter/xlsx-converter/XlsxConverterFactory";
+import { OtdrParserFactory } from "./otdr/OtdrParserFactory";
 
 const convertButton =
   document.querySelector<HTMLButtonElement>("button#convert")!;
@@ -18,18 +15,10 @@ convertButton.onclick = async () => {
   }
   const [inputFile] = fileInput.files;
   try {
-    // TODO: extract the creation of xlsx converter into another file
-    const xlsxConverter = new XlsxConverter(
-      new HeaderCellDataFactory(new CellFactory()),
-    );
-    const parserFactory = new BlockParserFactory();
-    const facadeParser = new OdtrParser(parserFactory);
-
-    const readerFactory = new ReaderFactory();
     const outputFile = await new OtdrToXlsxConverter(
-      facadeParser,
-      readerFactory,
-      xlsxConverter,
+      new OtdrParserFactory().createParser(),
+      new ReaderFactory(),
+      new XlsxConverterFactory().createXlsxConverter(),
     ).convert(inputFile);
     downloadFile(outputFile);
   } catch (e) {
