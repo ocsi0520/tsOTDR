@@ -1,9 +1,9 @@
-import type { Cell, Row, SheetData } from "write-excel-file";
+import type { Cell, CellObject, Row, SheetData } from "write-excel-file/browser";
 import type { Representation } from "../../otdr/representation/Representation";
 
-type CellWithSpan = NonNullable<Cell> & { span: number };
+type CellWithSpan = NonNullable<CellObject> & { span: number };
 type CellBorderDirectionProps = Extract<
-  keyof NonNullable<Cell>,
+  keyof NonNullable<CellObject>,
   `${string}BorderStyle`
 >;
 
