@@ -10,12 +10,16 @@ export class HeaderCellDataFactory {
     this.cellFactory = cellFactory;
     this.borderStyler = borderStyler;
   }
-  // TODO: finish
+
   public getRows(representation: Representation): SheetData {
-    const allRows = [
+    const allRows: SheetData = [
       this.getFirstRow(representation),
       this.getSecondRow(representation),
       this.getThirdRow(representation),
+      this.getFourthRow(representation),
+      this.getFifthRow(representation),
+      this.getSixthRow(representation),
+      this.getSeventhRow(representation),
     ];
 
     const borderedRows: SheetData = [
@@ -45,8 +49,6 @@ export class HeaderCellDataFactory {
       ...this.cellFactory.createSpanCell({
         value: "Kábel telepítés helye:",
         span: 6,
-        borderStyle: "thin",
-        topBorderStyle: "thick",
       }),
       ...this.cellFactory.createSpanCell(this.getLocationCell(representation)),
     ];
@@ -57,19 +59,91 @@ export class HeaderCellDataFactory {
       ...this.cellFactory.createSpanCell({
         value: "Mérési hullámhossz:",
         span: 6,
-        borderStyle: "thin",
       }),
       ...this.cellFactory.createSpanCell({
-        borderStyle: "thin",
         span: 4,
         value: genParamsBlock.waveLengthInNm + " nm",
       }),
       ...this.cellFactory.createSpanCell({
-        borderStyle: "thin",
         span: 9,
         value: "Mérést végezte:" + genParamsBlock.operator,
       }),
     ];
+  }
+
+  private getFourthRow({ genParamsBlock }: Representation): Row {
+    const bindingText = "Kötést készítette: " + genParamsBlock.operator;
+    return [
+      ...this.cellFactory.createSpanCell({
+        value: "Alk törésmutató:",
+        span: 6,
+      }),
+      ...this.cellFactory.createSpanCell({ value: "", span: 4 }),
+      ...this.cellFactory.createSpanCell({ value: bindingText, span: 9 }),
+    ];
+  }
+
+  private getFifthRow(representation: Representation): Row {
+    const typeAndSerialNumber = `${representation.supParamsBlock.module.name} ${representation.supParamsBlock.module.serialNumber}`;
+    return [
+      ...this.cellFactory.createSpanCell({
+        span: 5,
+        value: "Mérési pontok azonosító \nszáma/jele:",
+        rowSpan: 2,
+      }),
+      { value: "A" },
+      ...this.cellFactory.createSpanCell({
+        span: 4,
+        value: representation.genParamsBlock.location.A,
+        fontWeight: "bold",
+      }),
+      ...this.cellFactory.createSpanCell({
+        span: 9,
+        value: "Kötőber. tip; gy.sz.:" + typeAndSerialNumber,
+      }),
+    ];
+  }
+
+  private getSixthRow(representation: Representation): Row {
+    return [
+      ...this.cellFactory.getEmptyCells(5),
+      { value: "B" },
+      ...this.cellFactory.createSpanCell({
+        span: 4,
+        value: representation.genParamsBlock.location.B,
+      }),
+      ...this.cellFactory.createSpanCell({
+        span: 9,
+        value: "gyári száma: ???",
+      }),
+    ];
+  }
+
+  private getSeventhRow(representation: Representation): Row {
+    console.log(representation);
+    return [
+      ...this.cellFactory.createSpanCell({
+        span: 6,
+        value: "Kábel típusa: ???",
+      }),
+      ...this.cellFactory.createSpanCell({
+        span: 4,
+        value: "???",
+      }),
+      ...this.cellFactory.createSpanCell({
+        span: 9,
+        value: "Szálhossz:",
+      }),
+    ];
+  }
+
+  private getCombinedLocation(representation: Representation): string {
+    const { A: locationA, B: locationB } =
+      representation.genParamsBlock.location;
+    return [locationA, locationB]
+      .map((location) => location.trim())
+      .filter(Boolean)
+      .join("-");
   }
 
   private getDateOfMeasurementCell(representation: Representation): CellObject {
@@ -79,18 +153,10 @@ export class HeaderCellDataFactory {
     };
   }
   private getLocationCell(representation: Representation): CellWithSpan {
-    const { A: locationA, B: locationB } =
-      representation.genParamsBlock.location;
-    const combinedLocation = [locationA, locationB]
-      .map((location) => location.trim())
-      .filter(Boolean)
-      .join("-");
     return {
-      value: combinedLocation,
+      value: this.getCombinedLocation(representation),
       type: String,
       fontWeight: "bold",
-      topBorderStyle: "thick",
-      borderStyle: "thin",
       span: 13,
     };
   }
