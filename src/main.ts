@@ -5,6 +5,7 @@ import { BlockParserFactory } from "./otdr/parser/BlockParserFactory";
 import { ReaderFactory } from "./otdr/reader/ReaderFactory";
 import { XlsxConverter } from "./converter/xlsx-converter/XlsxConverter";
 import { HeaderCellDataFactory } from "./converter/xlsx-converter/HeaderCellDataFactory";
+import { CellFactory } from "./converter/xlsx-converter/CellFactory";
 
 const convertButton =
   document.querySelector<HTMLButtonElement>("button#convert")!;
@@ -18,7 +19,9 @@ convertButton.onclick = async () => {
   const [inputFile] = fileInput.files;
   try {
     // TODO: extract the creation of xlsx converter into another file
-    const xlsxConverter = new XlsxConverter(new HeaderCellDataFactory());
+    const xlsxConverter = new XlsxConverter(
+      new HeaderCellDataFactory(new CellFactory()),
+    );
     const parserFactory = new BlockParserFactory();
     const facadeParser = new OdtrParser(parserFactory);
 
