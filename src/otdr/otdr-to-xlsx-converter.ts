@@ -22,7 +22,7 @@ export class OtdrToXlsxConverter {
     this.validate(sorFile);
     const reader = await this.readerFactory.createReader(sorFile);
 
-    const representation = this.parser.parse(reader);
+    const representation = this.parser.parseWith(reader);
     return this.xlsxConverter.convertRepresentation(representation);
   }
   private validate(sorFile: File): void {
