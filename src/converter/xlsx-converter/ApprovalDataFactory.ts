@@ -1,13 +1,13 @@
-import type { BorderStyler } from "./BorderStyler";
+import type { FrameCreator } from "./FrameCreator";
 import type { CellFactory } from "./CellFactory";
 import type { Row, SheetData } from "./excel-types";
 
 export class ApprovalDataFactory {
   private cellFactory: CellFactory;
-  private borderStyler: BorderStyler;
-  constructor(cellFactory: CellFactory, borderStyler: BorderStyler) {
+  private frameCreator: FrameCreator;
+  constructor(cellFactory: CellFactory, frameCreator: FrameCreator) {
     this.cellFactory = cellFactory;
-    this.borderStyler = borderStyler;
+    this.frameCreator = frameCreator;
   }
 
   public getRows(): SheetData {
@@ -19,7 +19,7 @@ export class ApprovalDataFactory {
 
     const borderedRows: SheetData = [
       allRows[0],
-      ...this.borderStyler.frameFor([allRows[1]]),
+      ...this.frameCreator.createFrameFor([allRows[1]]),
       allRows[2],
     ];
 
