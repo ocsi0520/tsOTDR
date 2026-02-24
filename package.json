@@ -13,6 +13,6 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "write-excel-file": "^3.0.3"
+    "write-excel-file": "^2.3.10"
   }
 }

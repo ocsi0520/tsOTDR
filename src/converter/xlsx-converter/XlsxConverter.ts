@@ -1,5 +1,5 @@
 import type { Representation } from "../../otdr/representation/Representation";
-import writeXlsxFile from "write-excel-file/browser";
+import writeXlsxFile from "write-excel-file";
 import type { HeaderCellDataFactory as HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import type { Columns, SheetData } from "./excel-types";
 
