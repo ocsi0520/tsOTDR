@@ -35,23 +35,21 @@ export class BorderStyler {
     if (!unified) return cell;
     return {
       ...unified,
-      leftBorderStyle: "thin",
-      rightBorderStyle: "thin",
-      bottomBorderStyle: "thin",
-      topBorderStyle: "slantDashDot",
+      borderStyle: "thin",
     };
   }
 
   public frameFor(sheetData: SheetData): SheetData {
     const sheetDataWithGrid = this.createThinGrid(sheetData);
-    return [
+    const firstRow = this.thickenLastCellBorder(
       this.thickenBorder(sheetDataWithGrid[0], "topBorderStyle"),
-      ...sheetDataWithGrid
-        .slice(1, -1)
-        .map(this.thickenLastCellBorder.bind(this)),
-      this.thickenLastCellBorder(
-        this.thickenBorder(sheetDataWithGrid.at(-1)!, "bottomBorderStyle"),
-      ),
-    ];
+    );
+    const lastRow = this.thickenLastCellBorder(
+      this.thickenBorder(sheetDataWithGrid.at(-1)!, "bottomBorderStyle"),
+    );
+    const middle = sheetDataWithGrid
+      .slice(1, -1)
+      .map(this.thickenLastCellBorder.bind(this));
+    return [firstRow, ...middle, lastRow];
   }
 }
