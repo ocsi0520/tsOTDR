@@ -14,13 +14,9 @@ export class BorderStyler {
   public thickenBorder(row: Row, whichBorder: CellBorderDirectionProps): Row {
     return row.map((cell) => cell && { ...cell, [whichBorder]: "thick" });
   }
-  public thickenLastCellBorder(row: Row): Row {
-    const lastIndexOfNonNullCell = row.findLastIndex(Boolean);
-    return row.map((cell, index) =>
-      cell && index === lastIndexOfNonNullCell
-        ? { ...this.unifier.unify(cell), rightBorderStyle: "thick" }
-        : cell,
-    );
+
+  public thickenLastCellBorder(sheetData: SheetData): SheetData {
+    return sheetData.map(this.thickenLastCellBorderInRow.bind(this));
   }
 
   public createThinGrid(sheetData: SheetData): SheetData {
@@ -39,6 +35,15 @@ export class BorderStyler {
     };
   }
 
+  private thickenLastCellBorderInRow(row: Row): Row {
+    const lastIndexOfNonNullCell = row.findLastIndex(Boolean);
+    return row.map((cell, index) =>
+      cell && index === lastIndexOfNonNullCell
+        ? { ...this.unifier.unify(cell), rightBorderStyle: "thick" }
+        : cell,
+    );
+  }
+
   // TODO: extract this or rename class
   private colorize(sheetData: RawCell[][]): RawCell[][] {
     return sheetData.map((row) =>
@@ -49,17 +54,26 @@ export class BorderStyler {
     );
   }
 
+  private thickenFirstRow(sheetData: SheetData): SheetData {
+    return [
+      this.thickenBorder(sheetData[0], "topBorderStyle"),
+      ...sheetData.slice(1),
+    ];
+  }
+
+  private thickenLastRow(sheetData: SheetData): SheetData {
+    return [
+      ...sheetData.slice(0, -1),
+      this.thickenBorder(sheetData.at(-1)!, "bottomBorderStyle"),
+    ];
+  }
+
   public frameFor(sheetData: SheetData): SheetData {
     const sheetDataWithGrid = this.createThinGrid(sheetData);
-    const firstRow = this.thickenLastCellBorder(
-      this.thickenBorder(sheetDataWithGrid[0], "topBorderStyle"),
+    return this.colorize(
+      this.thickenLastCellBorder(
+        this.thickenLastRow(this.thickenFirstRow(sheetDataWithGrid)),
+      ),
     );
-    const lastRow = this.thickenLastCellBorder(
-      this.thickenBorder(sheetDataWithGrid.at(-1)!, "bottomBorderStyle"),
-    );
-    const middle = sheetDataWithGrid
-      .slice(1, -1)
-      .map(this.thickenLastCellBorder.bind(this));
-    return this.colorize([firstRow, ...middle, lastRow]);
   }
 }
