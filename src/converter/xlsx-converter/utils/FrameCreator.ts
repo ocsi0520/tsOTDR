@@ -1,5 +1,5 @@
 import type { CellStructureUnifier } from "./CellStructureUnifier";
-import type { CellObject, RawCell, Row, SheetData } from "./excel-types";
+import type { CellObject, RawCell, Row, SheetData } from "../excel-types";
 
 type CellBorderDirectionProps = Extract<
   keyof NonNullable<CellObject>,

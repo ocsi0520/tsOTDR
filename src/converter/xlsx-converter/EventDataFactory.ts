@@ -3,8 +3,8 @@ import type {
   KeyEventsSummary,
 } from "../../otdr/representation/KeyEvents";
 import type { Representation } from "../../otdr/representation/Representation";
-import type { CellFactory } from "./CellFactory";
-import type { FrameCreator } from "./FrameCreator";
+import type { CellFactory } from "./utils/CellFactory";
+import type { FrameCreator } from "./utils/FrameCreator";
 import type { Row, SheetData } from "./excel-types";
 
 const KM_TO_M = 1_000;

@@ -1,5 +1,5 @@
-import type { FrameCreator } from "./FrameCreator";
-import type { CellFactory } from "./CellFactory";
+import type { FrameCreator } from "./utils/FrameCreator";
+import type { CellFactory } from "./utils/CellFactory";
 import type { Row, SheetData } from "./excel-types";
 
 export class ApprovalDataFactory {

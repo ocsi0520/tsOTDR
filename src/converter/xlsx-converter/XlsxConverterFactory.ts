@@ -1,7 +1,7 @@
 import { ApprovalDataFactory } from "./ApprovalDataFactory";
-import { FrameCreator } from "./FrameCreator";
-import { CellFactory } from "./CellFactory";
-import { CellStructureUnifier } from "./CellStructureUnifier";
+import { FrameCreator } from "./utils/FrameCreator";
+import { CellFactory } from "./utils/CellFactory";
+import { CellStructureUnifier } from "./utils/CellStructureUnifier";
 import { HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import { XlsxConverter } from "./XlsxConverter";
 import { CommentDataFactory } from "./CommentDataFactory";

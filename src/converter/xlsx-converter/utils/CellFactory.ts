@@ -1,4 +1,4 @@
-import type { CellWithSpan, RawCell } from "./excel-types";
+import type { CellWithSpan, RawCell } from "../excel-types";
 
 export class CellFactory {
   public getEmptyCell(): RawCell {
