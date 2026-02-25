@@ -119,8 +119,7 @@ export class HeaderCellDataFactory {
     ];
   }
 
-  private getSeventhRow(representation: Representation): Row {
-    console.log(representation);
+  private getSeventhRow(_representation: Representation): Row {
     return [
       ...this.cellFactory.createSpanCell({
         span: 6,
