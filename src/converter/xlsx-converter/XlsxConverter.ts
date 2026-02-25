@@ -34,7 +34,7 @@ export class XlsxConverter {
     const xlsxBlob = await writeXlsxFile(this.gatherAllParts(representation), {
       dateFormat: "yyyy.mm.dd",
       fontSize: 10,
-      columns: this.getColumnWeights([[17, 17]]),
+      columns: this.getColumnWidths(),
     });
     return new File([xlsxBlob], this.getFileName(representation), {
       // application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
@@ -64,20 +64,11 @@ export class XlsxConverter {
     return operatorName.replaceAll(" ", "_");
   }
 
-  /**
-   *
-   * @param columnDescriptors tuple of `column number` (1-based) and its `width` in characters
-   */
-  private getColumnWeights(
-    columnDescriptors: Array<[columnNumber: number, width: number]>,
-  ): Columns {
-    const maxColumn = Math.max(...columnDescriptors.map((descr) => descr[1]));
-    const columns: Columns = [];
-    for (let i = 1; i <= maxColumn; i++) {
-      const width = columnDescriptors.find((descr) => descr[0] === i)?.[1];
-      columns.push(width !== undefined ? { width } : {});
-    }
-
-    return columns;
+  private getColumnWidths(): Columns {
+    // these fractions are from libre-office calc
+    return [
+      1.05, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 1.5 /*H*/, 0.3, 0.3, 0.3, 0.3, 0.3,
+      1.05 /*N*/, 0.3, 0.3, 0.7, 0.7 /* Date Q,R */, 0.3,
+    ].map((width) => ({ width: width * 15 }));
   }
 }
