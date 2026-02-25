@@ -1,10 +1,11 @@
 import type { Representation } from "../../otdr/representation/Representation";
-import writeXlsxFile from "write-excel-file";
+import writeXlsxFile, { type SheetData as RawSheetData } from "write-excel-file";
 import type { HeaderCellDataFactory as HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import type { Columns, SheetData } from "./excel-types";
 import type { ApprovalDataFactory } from "./ApprovalDataFactory";
 import type { CommentDataFactory } from "./CommentDataFactory";
 import type { EventDataFactory } from "./EventDataFactory";
+import type { CellStructureUnifier } from "./utils/CellStructureUnifier";
 
 // options: - https://sheetjs.com/ (no styling)
 //          - https://www.npmjs.com/package/write-excel-file (fixed minimatch - https://gitlab.com/catamphetamine/write-excel-file/-/issues/106)
@@ -15,23 +16,28 @@ export class XlsxConverter {
   private approvalDataFactory: ApprovalDataFactory;
   private commentDataFactory: CommentDataFactory;
   private eventDataFactory: EventDataFactory;
+  private cellStructureUnifier: CellStructureUnifier;
 
   constructor(
     headerCellDataFactory: HeaderCellDataFactory,
     approvalDataFactory: ApprovalDataFactory,
     commentDataFactory: CommentDataFactory,
     eventDataFactory: EventDataFactory,
+    cellStructureUnifier: CellStructureUnifier,
   ) {
     this.headerCellDataFactory = headerCellDataFactory;
     this.approvalDataFactory = approvalDataFactory;
     this.commentDataFactory = commentDataFactory;
     this.eventDataFactory = eventDataFactory;
+    this.cellStructureUnifier = cellStructureUnifier;
   }
 
   public async convertRepresentation(
     representation: Representation,
   ): Promise<File> {
-    const xlsxBlob = await writeXlsxFile(this.gatherAllParts(representation), {
+    const allParts = this.gatherAllParts(representation);
+    const compatibleSheetData = this.mapSheetDataToRaw(allParts);
+    const xlsxBlob = await writeXlsxFile(compatibleSheetData, {
       dateFormat: "yyyy.mm.dd",
       fontSize: 10,
       columns: this.getColumnWidths(),
@@ -49,6 +55,12 @@ export class XlsxConverter {
       ...this.commentDataFactory.getRows(),
       ...this.eventDataFactory.getRows(representation),
     ];
+  }
+
+  private mapSheetDataToRaw(sheetData: SheetData): RawSheetData {
+    return sheetData.map((row) =>
+      row.map((cell) => this.cellStructureUnifier.unify(cell)),
+    );
   }
 
   private getFileName(representation: Representation): `${string}.xlsx` {

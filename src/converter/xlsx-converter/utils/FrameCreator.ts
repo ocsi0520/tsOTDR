@@ -1,5 +1,5 @@
 import type { CellStructureUnifier } from "./CellStructureUnifier";
-import type { CellObject, RawCell, Row, SheetData } from "../excel-types";
+import type { CellObject, CellV3, Row, SheetData } from "../excel-types";
 
 type CellBorderDirectionProps = Extract<
   keyof NonNullable<CellObject>,
@@ -26,7 +26,7 @@ export class FrameCreator {
   private createThinBordersForCellsIn(row: Row): Row {
     return row.map(this.createThinBordersForCell.bind(this));
   }
-  private createThinBordersForCell(cell: RawCell): RawCell {
+  private createThinBordersForCell(cell: CellV3): CellV3 {
     const unified = this.unifier.unify(cell);
     if (!unified) return cell;
     return {
@@ -44,7 +44,7 @@ export class FrameCreator {
     );
   }
 
-  private colorize(sheetData: RawCell[][]): RawCell[][] {
+  private colorize(sheetData: CellV3[][]): CellV3[][] {
     return sheetData.map((row) =>
       row.map(
         (cell) =>
