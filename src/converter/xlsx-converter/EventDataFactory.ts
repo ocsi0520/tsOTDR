@@ -7,23 +7,26 @@ import type { CellFactory } from "./utils/CellFactory";
 import type { FrameCreator } from "./utils/FrameCreator";
 import type { Row, SheetData } from "./excel-types";
 import type { NumberPrecisionSetter } from "./utils/NumberPrecisionSetter";
+import type { AlignmentSetter } from "./utils/AlignmentSetter";
 
 const KM_TO_M = 1_000;
 
-// TODO: proper styling (alignment)
 export class EventDataFactory {
   private cellFactory: CellFactory;
   private frameCreator: FrameCreator;
   private numberPrecisionSetter: NumberPrecisionSetter;
+  private alignmentSetter: AlignmentSetter;
 
   constructor(
     cellFactory: CellFactory,
     frameCreator: FrameCreator,
     numberPrecisionSetter: NumberPrecisionSetter,
+    alignmentSetter: AlignmentSetter,
   ) {
     this.cellFactory = cellFactory;
     this.frameCreator = frameCreator;
     this.numberPrecisionSetter = numberPrecisionSetter;
+    this.alignmentSetter = alignmentSetter;
   }
 
   public getRows(representation: Representation): SheetData {
@@ -45,7 +48,15 @@ export class EventDataFactory {
     const precisionSetRows =
       this.numberPrecisionSetter.setPrecisionInSheet(borderedRows);
 
-    return precisionSetRows;
+    const centeredRows = this.alignmentSetter.setAlignmentInSheet(
+      precisionSetRows,
+      {
+        align: "center",
+        alignVertical: "center",
+      },
+    );
+
+    return centeredRows;
   }
 
   private getFiberRow(representation: Representation): Row {
