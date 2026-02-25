@@ -9,13 +9,15 @@ import { EventDataFactory } from "./EventDataFactory";
 
 export class XlsxConverterFactory {
   public createXlsxConverter(): XlsxConverter {
+    const cellStructureUnifier = new CellStructureUnifier();
     const cellFactory = new CellFactory();
-    const frameCreator = new FrameCreator(new CellStructureUnifier());
+    const frameCreator = new FrameCreator(cellStructureUnifier);
     return new XlsxConverter(
       new HeaderCellDataFactory(cellFactory, frameCreator),
       new ApprovalDataFactory(cellFactory, frameCreator),
       new CommentDataFactory(cellFactory, frameCreator),
       new EventDataFactory(cellFactory, frameCreator),
+      cellStructureUnifier,
     );
   }
 }
