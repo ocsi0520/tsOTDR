@@ -6,17 +6,21 @@ import { HeaderCellDataFactory } from "./HeaderCellDataFactory";
 import { XlsxConverter } from "./XlsxConverter";
 import { CommentDataFactory } from "./CommentDataFactory";
 import { EventDataFactory } from "./EventDataFactory";
+import { NumberPrecisionSetter } from "./utils/NumberPrecisionSetter";
 
 export class XlsxConverterFactory {
   public createXlsxConverter(): XlsxConverter {
     const cellStructureUnifier = new CellStructureUnifier();
     const cellFactory = new CellFactory();
     const frameCreator = new FrameCreator(cellStructureUnifier);
+    const numberPrecisionSetter = new NumberPrecisionSetter(
+      cellStructureUnifier,
+    );
     return new XlsxConverter(
       new HeaderCellDataFactory(cellFactory, frameCreator),
       new ApprovalDataFactory(cellFactory, frameCreator),
       new CommentDataFactory(cellFactory, frameCreator),
-      new EventDataFactory(cellFactory, frameCreator),
+      new EventDataFactory(cellFactory, frameCreator, numberPrecisionSetter),
       cellStructureUnifier,
     );
   }
