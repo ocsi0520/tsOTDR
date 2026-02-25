@@ -1,7 +1,7 @@
 import type { Representation } from "../../otdr/representation/Representation";
 import type { CellFactory } from "./CellFactory";
 import type { FrameCreator } from "./FrameCreator";
-import type { CellWithSpan, Row, SheetData, CellObject } from "./excel-types";
+import type { CellWithSpan, Row, SheetData } from "./excel-types";
 
 export class HeaderCellDataFactory {
   private cellFactory: CellFactory;
@@ -40,8 +40,12 @@ export class HeaderCellDataFactory {
       ...this.cellFactory.getEmptyCells(5), // really empty cells
       { value: "Mérés dátuma" },
       ...this.cellFactory.getEmptyCells(2),
-      this.getDateOfMeasurementCell(representation),
-      ...this.cellFactory.getEmptyCells(2),
+      ...this.cellFactory.createSpanCell({
+        span: 2,
+        type: Date,
+        value: representation.fxdParamsBlock.date.normalized,
+      }),
+      this.cellFactory.getEmptyCell(), // really empty cells
     ];
   }
   private getSecondRow(representation: Representation): Row {
@@ -145,12 +149,6 @@ export class HeaderCellDataFactory {
       .join("-");
   }
 
-  private getDateOfMeasurementCell(representation: Representation): CellObject {
-    return {
-      type: Date,
-      value: representation.fxdParamsBlock.date.normalized,
-    };
-  }
   private getLocationCell(representation: Representation): CellWithSpan {
     return {
       value: this.getCombinedLocation(representation),
