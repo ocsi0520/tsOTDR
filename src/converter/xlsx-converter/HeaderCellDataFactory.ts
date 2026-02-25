@@ -1,6 +1,6 @@
 import type { Representation } from "../../otdr/representation/Representation";
-import type { CellFactory } from "./CellFactory";
-import type { FrameCreator } from "./FrameCreator";
+import type { CellFactory } from "./utils/CellFactory";
+import type { FrameCreator } from "./utils/FrameCreator";
 import type { CellWithSpan, Row, SheetData } from "./excel-types";
 
 export class HeaderCellDataFactory {

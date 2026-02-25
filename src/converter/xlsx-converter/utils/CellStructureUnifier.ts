@@ -1,4 +1,4 @@
-import type { CellObject, CellV3, ValueType } from "./excel-types";
+import type { CellObject, CellV3, ValueType } from "../excel-types";
 
 export class CellStructureUnifier {
   public unify(cell: CellV3): CellObject | null {
