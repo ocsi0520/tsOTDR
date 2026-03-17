@@ -1,6 +1,6 @@
-import type writeXlsxFile from "write-excel-file";
-import type { Cell as RawCell, ValueType } from "write-excel-file";
-export type { ValueType } from "write-excel-file";
+import type writeXlsxFile from "write-excel-file/browser";
+import type { Cell as RawCell, ValueType } from "write-excel-file/browser";
+export type { ValueType } from "write-excel-file/browser";
 
 export type CellV3 = RawCell extends ValueType ? RawCell : RawCell | ValueType;
 export type Row = CellV3[];
